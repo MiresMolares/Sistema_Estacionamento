@@ -1,10 +1,10 @@
-const express =  require("express")
+const express = require("express")
 const cors = require("cors")
 const porta = 3000
 
 const app = express()
-app.use (express.json())
-app.use (cors())
+app.use(express.json())
+app.use(cors())
 
 let VEICULOS = [
     {
@@ -26,7 +26,7 @@ let VEICULOS = [
         placa: "GHI-5678",
         modelo: "hatch",
         hora_entrada: new Date().toISOString(),
-        pago: false 
+        pago: false
     },
     {
         id: 4,
@@ -44,26 +44,34 @@ let VEICULOS = [
     }
 ];
 
-app.get("/", (req, res)=> {
-    res.status(200).json({msg:"Hello"})
+app.get("/", (req, res) => {
+    res.status(200).json({ msg: "Hello" })
 })
 
-app.get("/lerveiculos", (req, res)=>{
+app.get("/lerveiculos", (req, res) => {
     res.status(200).json(VEICULOS)
 })
 
-app.get("/lerveiculos/:id", (req,res)=>{
+app.get("/lerveiculos/:id", (req, res) => {
     const id = Number(req.params.id)
     const meuCarro = VEICULOS.find(meuCarro => meuCarro.id === id)
     console.log(meuCarro)
     res.status(200).json(meuCarro)
 })
 
-app.patch("/atualizarpagamento/:id",(req, res)=>{
-    const veiculo =     VEICULOS.find(x =>{x.id === Number(req.params.id)})
+app.patch("/atualizarpagamento/:id", (req, res) => {
+    const veiculo = VEICULOS.find(x => x.id === Number(req.params.id));
+    console.log(veiculo)
+    if (!veiculo) return res.status(404).json({ erro: "Não achei" })
+
+    const { pago } = req.body;
+
+    if (pago !== undefined) veiculo.pago = pago;
+
+    res.json(veiculo)
 })
 
 
-app.listen(porta, ()=>{
+app.listen(porta, () => {
     console.log(`console rodando no http://localhost:${porta}`)
 })
